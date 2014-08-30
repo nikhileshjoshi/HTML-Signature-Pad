@@ -1,0 +1,134 @@
+<html>
+
+<head>
+    <title>Signature Pad</title>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript">
+        var canvas, context;
+        $(document).ready(function () {
+            canvas = document.createElement("canvas");
+            canvas.width = $(window).width() - 50;
+            canvas.height = $(window).height() / 2;
+            canvas.id = "canvas";
+            context = canvas.getContext('2d');
+            $('#divCanvas').append(canvas);
+            //createEvents();
+            drawBorder();
+        });
+        
+        var drawBorder = function(){
+            context.beginPath();
+      			context.rect(0, 0, canvas.width, canvas.height);
+      			context.closePath();
+      			context.fillStyle = '#333333';
+      			context.fill();
+            context.beginPath();
+            context.rect(2,2,canvas.width-4,canvas.height-4);
+            context.closePath();
+            context.fillStyle = 'white';
+            context.fill();
+        };
+        
+        var redraw = function(){
+            clearCanvas();  
+            
+        };
+        
+        var clearCanvas = function(){
+            context.clearRect(0,0,canvas.width,canvas.height);
+            drawBorder();
+        };
+
+        var createEvents = function () {
+            var press = function (e) {
+                    // Mouse down location
+                    var sizeHotspotStartX,
+                        mouseX = e.pageX - this.offsetLeft,
+                        mouseY = e.pageY - this.offsetTop;
+
+                    if (mouseX < drawingAreaX) { // Left of the drawing area
+                        if (mouseX > mediumStartX) {
+                            if (mouseY > mediumStartY && mouseY < mediumStartY + mediumImageHeight) {
+                                curColor = colorPurple;
+                            } else if (mouseY > mediumStartY + mediumImageHeight && mouseY < mediumStartY + mediumImageHeight * 2) {
+                                curColor = colorGreen;
+                            } else if (mouseY > mediumStartY + mediumImageHeight * 2 && mouseY < mediumStartY + mediumImageHeight * 3) {
+                                curColor = colorYellow;
+                            } else if (mouseY > mediumStartY + mediumImageHeight * 3 && mouseY < mediumStartY + mediumImageHeight * 4) {
+                                curColor = colorBrown;
+                            }
+                        }
+                    } else if (mouseX > drawingAreaX + drawingAreaWidth) { // Right of the drawing area
+
+                        if (mouseY > toolHotspotStartY) {
+                            if (mouseY > sizeHotspotStartY) {
+                                sizeHotspotStartX = drawingAreaX + drawingAreaWidth;
+                                if (mouseY < sizeHotspotStartY + sizeHotspotHeight && mouseX > sizeHotspotStartX) {
+                                    if (mouseX < sizeHotspotStartX + sizeHotspotWidthObject.huge) {
+                                        curSize = "huge";
+                                    } else if (mouseX < sizeHotspotStartX + sizeHotspotWidthObject.large + sizeHotspotWidthObject.huge) {
+                                        curSize = "large";
+                                    } else if (mouseX < sizeHotspotStartX + sizeHotspotWidthObject.normal + sizeHotspotWidthObject.large + sizeHotspotWidthObject.huge) {
+                                        curSize = "normal";
+                                    } else if (mouseX < sizeHotspotStartX + sizeHotspotWidthObject.small + sizeHotspotWidthObject.normal + sizeHotspotWidthObject.large + sizeHotspotWidthObject.huge) {
+                                        curSize = "small";
+                                    }
+                                }
+                            } else {
+                                if (mouseY < toolHotspotStartY + toolHotspotHeight) {
+                                    curTool = "crayon";
+                                } else if (mouseY < toolHotspotStartY + toolHotspotHeight * 2) {
+                                    curTool = "marker";
+                                } else if (mouseY < toolHotspotStartY + toolHotspotHeight * 3) {
+                                    curTool = "eraser";
+                                }
+                            }
+                        }
+                    }
+                    paint = true;
+                    addClick(mouseX, mouseY, false);
+                    redraw();
+                },
+
+                drag = function (e) {
+                    if (paint) {
+                        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+                        redraw();
+                    }
+                    // Prevent the whole page from dragging if on mobile
+                    e.preventDefault();
+                },
+
+                release = function () {
+                    paint = false;
+                    redraw();
+                },
+
+                cancel = function () {
+                    paint = false;
+                };
+
+            // Add mouse event listeners to canvas element
+            canvas.addEventListener("mousedown", press, false);
+            canvas.addEventListener("mousemove", drag, false);
+            canvas.addEventListener("mouseup", release);
+            canvas.addEventListener("mouseout", cancel, false);
+
+            // Add touch event listeners to canvas element
+            canvas.addEventListener("touchstart", press, false);
+            canvas.addEventListener("touchmove", drag, false);
+            canvas.addEventListener("touchend", release, false);
+            canvas.addEventListener("touchcancel", cancel, false);
+        }
+    </script>
+</head>
+
+<body>
+    <div id='divCanvas' ></div>
+    <div>
+        <input type="submit" value="Clear" onclick="clearCanvas()">
+        <input type="submit" value="Done">
+    </div>
+</body>
+
+</html>
