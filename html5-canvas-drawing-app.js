@@ -197,7 +197,7 @@ var drawingApp = (function () {
 			context.beginPath();
 			context.rect(locX, locY, 2, 12);
 			context.closePath();
-			context.fillStyle = '#333333';
+			context.fillStyle = 'blue';
 			context.fill();
 
 			// Keep the drawing in the drawing area
@@ -288,7 +288,6 @@ var drawingApp = (function () {
 				var sizeHotspotStartX,
 					mouseX = e.pageX - this.offsetLeft,
 					mouseY = e.pageY - this.offsetTop;
-
 				if (mouseX < drawingAreaX) { // Left of the drawing area
 					if (mouseX > mediumStartX) {
 						if (mouseY > mediumStartY && mouseY < mediumStartY + mediumImageHeight) {
